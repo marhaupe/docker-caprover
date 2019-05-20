@@ -1,0 +1,35 @@
+build:
+  stage: build
+  tags:
+    - docker
+  only:
+    - master
+  script:
+    - "docker build -t marhaupe/docker-caprover ."
+
+push:
+  stage: push
+  when: manual
+  allow_failure: false
+  tags: 
+    - docker
+  only:
+    - master
+  script:
+    - "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD"
+    - "docker push marhaupe/docker-caprover"
+
+cleanup:
+  stage: cleanup
+  when: always
+  tags:
+    - docker
+  only:
+    - master
+  script:
+    - docker image prune -f
+
+stages: 
+  - build
+  - push
+  - cleanup
